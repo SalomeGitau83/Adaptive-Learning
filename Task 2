@@ -1,0 +1,108 @@
+      import numpy as np
+
+class MultilayerPerceptron:
+    """
+    Multilayer Perceptron (MLP) implemented from scratch using NumPy.
+    Demonstrates systematic feature learning through forward propagation,
+    sigmoid activation, and backpropagation via the chain rule.
+    Architecture: input layer → hidden layer(s) → output layer
+    """
+
+    def __init__(self, layer_sizes, learning_rate=0.1):
+        """
+        layer_sizes: list of integers, e.g. [2, 4, 4, 1]
+          = 2 input nodes, two hidden layers of 4 nodes, 1 output node
+        learning_rate: step size for gradient descent
+        """
+        self.lr = learning_rate
+        self.weights = []
+        self.biases  = []
+        # Initialise weights with He initialisation for each layer
+        for i in range(len(layer_sizes) - 1):
+            W = np.random.randn(layer_sizes[i], layer_sizes[i+1]) * np.sqrt(2 / layer_sizes[i])
+            b = np.zeros((1, layer_sizes[i+1]))
+            self.weights.append(W)
+            self.biases.append(b)
+
+    def sigmoid(self, z):
+        """Sigmoid activation: squashes any value into the range (0, 1)."""
+        return 1 / (1 + np.exp(-np.clip(z, -500, 500)))
+
+    def sigmoid_deriv(self, a):
+        """Derivative of sigmoid: d/dz sigmoid(z) = a(1 - a)."""
+        return a * (1 - a)
+
+    def forward(self, X):
+        """
+        Forward pass: propagate input X through all layers.
+        Stores all intermediate activations for use in backpropagation.
+        """
+        self.activations = [X]   # activations[0] = input
+        current = X
+        for W, b in zip(self.weights, self.biases):
+            z = current @ W + b          # linear combination: z = XW + b
+            current = self.sigmoid(z)    # apply non-linear activation
+            self.activations.append(current)
+        return current                   # final output (predictions)
+
+    def backward(self, X, y):
+        """
+        Backward pass (Backpropagation):
+        Uses the chain rule to compute gradients of the loss with respect
+        to every weight and bias, then updates them via gradient descent.
+        """
+        n      = X.shape[0]
+        output = self.activations[-1]
+
+        # Compute output layer error: dL/dz = (prediction - target) * sigmoid'(output)
+        delta = (output - y) * self.sigmoid_deriv(output)
+
+        # Backpropagate through layers from output to input
+        for i in reversed(range(len(self.weights))):
+            a_prev = self.activations[i]
+            dW = (a_prev.T @ delta) / n   # gradient of weights
+            db = np.mean(delta, axis=0, keepdims=True)  # gradient of biases
+            # Update weights and biases using gradient descent
+            self.weights[i] -= self.lr * dW
+            self.biases[i]  -= self.lr * db
+            # Propagate delta to the previous layer
+            if i > 0:
+                delta = (delta @ self.weights[i].T) * self.sigmoid_deriv(self.activations[i])
+
+    def train(self, X, y, epochs=2000):
+        """Train the MLP for a given number of epochs."""
+        for epoch in range(epochs):
+            output = self.forward(X)    # forward pass: compute predictions
+            self.backward(X, y)         # backward pass: update all weights
+            if epoch % 200 == 0:
+                loss = np.mean((output - y) ** 2)   # Mean Squared Error
+                print(f"Epoch {epoch:5d} | Loss: {loss:.6f}")
+
+    def predict(self, X):
+        """Return predictions for input X."""
+        return self.forward(X)
+
+
+# ── Demo: Learn the XOR problem (non-linearly separable) ──────────────────
+# XOR cannot be learned by a single-layer perceptron;
+# only an MLP with at least one hidden layer can solve it.
+
+X = np.array([[0, 0],
+              [0, 1],
+              [1, 0],
+              [1, 1]])   # 4 input patterns
+
+y = np.array([[0],
+              [1],
+              [1],
+              [0]])       # XOR labels
+
+# Build MLP: 2 inputs → 4 hidden → 4 hidden → 1 output
+mlp = MultilayerPerceptron(layer_sizes=[2, 4, 4, 1], learning_rate=0.5)
+mlp.train(X, y, epochs=2000)
+
+# Evaluate
+predictions = mlp.predict(X)
+print("\nFinal Predictions:")
+for i in range(len(X)):
+    print(f"  Input: {X[i]}  |  Predicted: {predictions[i][0]:.4f}  |  Actual: {y[i][0]}")
