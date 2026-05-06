@@ -106,3 +106,21 @@ predictions = mlp.predict(X)
 print("\nFinal Predictions:")
 for i in range(len(X)):
     print(f"  Input: {X[i]}  |  Predicted: {predictions[i][0]:.4f}  |  Actual: {y[i][0]}")
+
+# Output
+# Epoch     0 | Loss: 0.257048
+# Epoch   200 | Loss: 0.249874
+# Epoch   400 | Loss: 0.249403
+# Epoch   600 | Loss: 0.248890
+# Epoch   800 | Loss: 0.248281
+# Epoch  1000 | Loss: 0.247505
+# Epoch  1200 | Loss: 0.246455
+# Epoch  1400 | Loss: 0.244963
+# Epoch  1600 | Loss: 0.242744
+# Epoch  1800 | Loss: 0.239316
+
+# Final Predictions:
+  # Input: [0 0]  |  Predicted: 0.4221  |  Actual: 0
+  # Input: [0 1]  |  Predicted: 0.5189  |  Actual: 1
+  # Input: [1 0]  |  Predicted: 0.5191  |  Actual: 1
+  # Input: [1 1]  |  Predicted: 0.5429  |  Actual: 0
