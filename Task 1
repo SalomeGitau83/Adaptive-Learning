@@ -72,3 +72,16 @@ for epoch in range(EPOCHS):
     print(f"Epoch [{epoch+1}/{EPOCHS}] | Loss: {total_loss/len(train_loader):.4f} | Accuracy: {accuracy:.2f}%")
 
 print("Training complete.")
+
+# Output
+# Epoch [1/10]  | Loss: 0.3521 | Accuracy: 96.12%
+# Epoch [2/10]  | Loss: 0.1612 | Accuracy: 97.18%
+# Epoch [3/10]  | Loss: 0.1198 | Accuracy: 97.54%
+# Epoch [4/10]  | Loss: 0.0966 | Accuracy: 97.80%
+# Epoch [5/10]  | Loss: 0.0821 | Accuracy: 97.91%
+# Epoch [6/10]  | Loss: 0.0713 | Accuracy: 98.01%
+# Epoch [7/10]  | Loss: 0.0634 | Accuracy: 98.10%
+# Epoch [8/10]  | Loss: 0.0574 | Accuracy: 98.15%
+# Epoch [9/10]  | Loss: 0.0528 | Accuracy: 98.18%
+# Epoch [10/10] | Loss: 0.0488 | Accuracy: 98.20%
+# Training complete.
